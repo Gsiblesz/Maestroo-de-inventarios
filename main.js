@@ -27,6 +27,14 @@ const createRow = (options = []) => {
   inputIngrediente.className = "input";
   inputIngrediente.setAttribute("list", "ingredientes-list");
 
+  const inputCodigo = document.createElement("input");
+  inputCodigo.name = "codigo";
+  inputCodigo.type = "text";
+  inputCodigo.placeholder = "Código";
+  inputCodigo.className = "input";
+  inputCodigo.readOnly = true;
+  inputCodigo.tabIndex = -1;
+
   const input = document.createElement("input");
   input.name = "stock";
   input.type = "number";
@@ -47,7 +55,10 @@ const createRow = (options = []) => {
     }
   });
 
-  row.append(inputIngrediente, input, remove);
+  inputIngrediente.addEventListener("change", () => syncCodigo(row));
+  inputIngrediente.addEventListener("input", () => syncCodigo(row));
+
+  row.append(inputIngrediente, inputCodigo, input, remove);
   return row;
 };
 
@@ -80,6 +91,27 @@ const renderDatalist = (options) => {
     .join("");
 };
 
+const syncCodigo = (row) => {
+  const [ingredienteEl, codigoEl] = row.querySelectorAll("input");
+  const val = (ingredienteEl.value || "").trim().toLowerCase();
+  const match = cachedOptions.find((opt) => {
+    const code = opt.code.toLowerCase();
+    const name = opt.name.toLowerCase();
+    return (
+      code === val ||
+      name === val ||
+      `${name} · ${code}` === val ||
+      `${code} · ${name}` === val
+    );
+  });
+  if (match) {
+    codigoEl.value = match.code;
+    ingredienteEl.value = match.name;
+  } else {
+    codigoEl.value = "";
+  }
+};
+
 const ensureRows = (count = 1) => {
   if (!rowsContainer.children.length) {
     rowsContainer.appendChild(createRow(cachedOptions));
@@ -105,7 +137,7 @@ form.addEventListener("submit", async (event) => {
   event.preventDefault();
 
   const payload = Array.from(rowsContainer.children).map((row) => {
-    const [ingredienteEl, stockEl] = row.querySelectorAll("input");
+    const [ingredienteEl, codigoEl, stockEl] = row.querySelectorAll("input");
     const raw = (ingredienteEl.value || "").trim();
     const val = raw.toLowerCase();
     const match = cachedOptions.find((opt) => {
@@ -120,7 +152,7 @@ form.addEventListener("submit", async (event) => {
     });
 
     return {
-      codigo: match ? match.code : raw,
+      codigo: codigoEl.value || (match ? match.code : raw),
       articulo: match ? match.name : "",
       stockInicial: Number((stockEl.value || "").trim()),
       matched: Boolean(match),
