@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Maestro de Inventario</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <div class="hero__pill">Operaciones · Inventario</div>
+      <h1>Centro rápido de
+        <span>formulario</span>
+      </h1>
+      <p>Registra varios ingredientes con su stock inicial en una sola carga. Se conecta al Sheet "COSTO MATERIA PRIMA" para sugerir la lista.</p>
+      <div class="hero__actions">
+        <a id="menu-link" class="btn primary" href="#" target="_blank" rel="noreferrer">Ver menú principal</a>
+      </div>
+    </header>
+
+    <section class="panel">
+      <div class="panel__header">
+        <div>
+          <p class="eyebrow">Registro de stock inicial</p>
+          <h2>Maestro de Inventario</h2>
+          <p class="lede">Selecciona el ingrediente desde la lista del Sheet y captura el stock inicial. Puedes cargar varias filas antes de enviar.</p>
+        </div>
+        <div class="badge">COSTO MATERIA PRIMA</div>
+      </div>
+
+      <form id="inventory-form" class="form" novalidate>
+        <div class="table">
+          <div class="table__head">
+            <span>Ingrediente (código o nombre)</span>
+            <span>Stock inicial</span>
+            <span class="sr-only">Acciones</span>
+          </div>
+          <div id="rows" class="table__body"></div>
+        </div>
+
+        <datalist id="ingredientes-list"></datalist>
+
+        <div class="actions actions--between">
+          <button id="add-row" type="button" class="btn ghost">Añadir fila</button>
+          <div class="right-actions">
+            <button type="reset" class="btn ghost">Limpiar</button>
+            <button type="submit" class="btn primary">Enviar</button>
+          </div>
+        </div>
+
+        <div id="status" class="status" aria-live="polite"></div>
+      </form>
+    </section>
+  </main>
+
+  <script src="main.js"></script>
+</body>
+</html>
