@@ -1,4 +1,4 @@
-const GAS_ENDPOINT = "https://script.google.com/macros/s/AKfycbzT3vZdDP0iGsU9xmoDS8h_i3o4qZ5JxG1c3aFvUMcDP-bn_cbvGjQswSkAEZC-4Qga/exec";
+const GAS_ENDPOINT = "https://script.google.com/macros/s/AKfycbxpcGHjuyCJkPt2ofE7ZVhBICsVnpVePWhNFk97m7xHGhHxpZhNnoY-5z5g_z3qq4Z3/exec";
 const MENU_LINK = "http://menu-almacen.vercel.app/"; // URL del menú principal
 
 const form = document.getElementById("inventory-form");
@@ -15,9 +15,27 @@ const setStatus = (message, type) => {
   statusEl.className = `status ${type || ""}`.trim();
 };
 
-const createRow = (options = []) => {
+const getLocalISODate = () => {
+  const now = new Date();
+  const local = new Date(now.getTime() - now.getTimezoneOffset() * 60000);
+  return local.toISOString().slice(0, 10);
+};
+
+const getDefaultDateForNewRow = () => {
+  const firstDate = rowsContainer.querySelector('input[name="fecha"]');
+  return (firstDate && firstDate.value) || getLocalISODate();
+};
+
+const createRow = () => {
   const row = document.createElement("div");
   row.className = "item-row";
+
+  const inputFecha = document.createElement("input");
+  inputFecha.name = "fecha";
+  inputFecha.type = "date";
+  inputFecha.required = true;
+  inputFecha.className = "input";
+  inputFecha.value = getDefaultDateForNewRow();
 
   const inputIngrediente = document.createElement("input");
   inputIngrediente.name = "ingrediente";
@@ -58,7 +76,7 @@ const createRow = (options = []) => {
   inputIngrediente.addEventListener("change", () => syncCodigo(row));
   inputIngrediente.addEventListener("input", () => syncCodigo(row));
 
-  row.append(inputIngrediente, inputCodigo, input, remove);
+  row.append(inputFecha, inputIngrediente, inputCodigo, input, remove);
   return row;
 };
 
@@ -92,7 +110,8 @@ const renderDatalist = (options) => {
 };
 
 const syncCodigo = (row) => {
-  const [ingredienteEl, codigoEl] = row.querySelectorAll("input");
+  const ingredienteEl = row.querySelector('input[name="ingrediente"]');
+  const codigoEl = row.querySelector('input[name="codigo"]');
   const val = (ingredienteEl.value || "").trim().toLowerCase();
   const match = cachedOptions.find((opt) => {
     const code = opt.code.toLowerCase();
@@ -114,15 +133,15 @@ const syncCodigo = (row) => {
 
 const ensureRows = (count = 1) => {
   if (!rowsContainer.children.length) {
-    rowsContainer.appendChild(createRow(cachedOptions));
+    rowsContainer.appendChild(createRow());
   }
   while (rowsContainer.children.length < count) {
-    rowsContainer.appendChild(createRow(cachedOptions));
+    rowsContainer.appendChild(createRow());
   }
 };
 
 addRowBtn.addEventListener("click", () => {
-  rowsContainer.appendChild(createRow(cachedOptions));
+  rowsContainer.appendChild(createRow());
 });
 
 form.addEventListener("reset", () => {
@@ -137,7 +156,12 @@ form.addEventListener("submit", async (event) => {
   event.preventDefault();
 
   const payload = Array.from(rowsContainer.children).map((row) => {
-    const [ingredienteEl, codigoEl, stockEl] = row.querySelectorAll("input");
+    const fechaEl = row.querySelector('input[name="fecha"]');
+    const ingredienteEl = row.querySelector('input[name="ingrediente"]');
+    const codigoEl = row.querySelector('input[name="codigo"]');
+    const stockEl = row.querySelector('input[name="stock"]');
+
+    const fecha = (fechaEl && fechaEl.value) || "";
     const raw = (ingredienteEl.value || "").trim();
     const val = raw.toLowerCase();
     const match = cachedOptions.find((opt) => {
@@ -152,6 +176,7 @@ form.addEventListener("submit", async (event) => {
     });
 
     return {
+      fecha,
       codigo: codigoEl.value || (match ? match.code : raw),
       articulo: match ? match.name : "",
       stockInicial: Number((stockEl.value || "").trim()),
@@ -159,12 +184,14 @@ form.addEventListener("submit", async (event) => {
     };
   });
 
+  const hasInvalidDate = payload.some((item) => !/^\d{4}-\d{2}-\d{2}$/.test(item.fecha || ""));
+
   const hasInvalid = payload.some(
     (item) => !item.codigo || Number.isNaN(item.stockInicial) || item.stockInicial < 0 || !item.matched
   );
 
-  if (!payload.length || hasInvalid) {
-    setStatus("Selecciona un codigo/nombre valido y stock (>= 0) en cada fila.", "error");
+  if (!payload.length || hasInvalid || hasInvalidDate) {
+    setStatus("Selecciona una fecha valida, un codigo/nombre valido y stock (>= 0) en cada fila.", "error");
     return;
   }
 
@@ -177,7 +204,7 @@ form.addEventListener("submit", async (event) => {
         "Content-Type": "text/plain;charset=utf-8",
       },
       body: JSON.stringify({
-        items: payload.map(({ codigo, articulo, stockInicial }) => ({ codigo, articulo, stockInicial })),
+        items: payload.map(({ fecha, codigo, articulo, stockInicial }) => ({ fecha, codigo, articulo, stockInicial })),
       }),
     });
 

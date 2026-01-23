@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Maestro de Inventario</title>
+  <title>Conteo de Inventario Físico</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -13,10 +13,10 @@
   <main class="page">
     <header class="hero">
       <div class="hero__pill">Operaciones · Inventario</div>
-      <h1>Maestro de Inventarios
-        <span>formulario rápido</span>
+      <h1>Conteo de Inventario
+        <span>físico</span>
       </h1>
-      <p>Registra varios ingredientes con su stock inicial en una sola carga. Se conecta al Sheet "COSTO MATERIA PRIMA" para sugerir la lista.</p>
+      <p>Registra el inventario físico por fecha. Se conecta al Sheet "COSTO MATERIA PRIMA" para sugerir la lista de ingredientes.</p>
       <div class="hero__actions">
         <a id="menu-link" class="btn primary" href="#" target="_blank" rel="noreferrer">Ver menú principal</a>
       </div>
@@ -25,9 +25,9 @@
     <section class="panel">
       <div class="panel__header">
         <div>
-          <p class="eyebrow">Registro de stock inicial</p>
+          <p class="eyebrow">Registro de inventario físico</p>
           <h2>Formulario rápido</h2>
-          <p class="lede">Selecciona el ingrediente desde la lista del Sheet y captura el stock inicial. Puedes cargar varias filas antes de enviar.</p>
+          <p class="lede">Selecciona el ingrediente desde la lista del Sheet y captura la cantidad contada. Puedes cargar varias filas antes de enviar.</p>
         </div>
         <div class="badge">COSTO MATERIA PRIMA</div>
       </div>
@@ -35,6 +35,7 @@
       <form id="inventory-form" class="form" novalidate>
         <div class="table">
           <div class="table__head">
+            <span>Fecha</span>
             <span>Ingrediente (código o nombre)</span>
             <span>Código</span>
             <span>Stock inicial</span>

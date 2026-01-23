@@ -1,10 +1,10 @@
 // Web App for Maestro de Inventario
 // - GET ?mode=ingredientes -> returns list from sheet COSTO MATERIA PRIMA (codigo + articulo)
-// - POST body { items: [{ codigo, articulo, stockInicial }] } -> appends rows into MAESTRO DE INVENTARIO
+// - POST body { items: [{ fecha, codigo, articulo, stockInicial }] } -> appends rows into CONTEO DE INVENTARIO FISICO
 
 const SPREADSHEET_ID = "1MQlP9wx199xW-gIYwf4FcjdANG9TLEkSjORiNmxJH5s"; // ID del libro
 const SOURCE_SHEET = "COSTO MATERIA PRIMA";
-const TARGET_SHEET = "MAESTRO DE INVENTARIOS"; // pestaña existente donde se guardan las respuestas
+const TARGET_SHEET = "CONTEO DE INVENTARIO FISICO"; // pestaña donde se guardan las respuestas
 
 function doGet(e) {
   const mode = (e && e.parameter && e.parameter.mode) || "";
@@ -35,9 +35,22 @@ function doPost(e) {
     const sourceMap = buildSourceMap();
 
     const rows = items.map((item) => {
+      const fechaRaw = (item.fecha || "").toString().trim();
       const codigo = (item.codigo || "").trim();
       const articulo = (item.articulo || sourceMap[codigo] || "").trim();
       const stockInicial = Number(item.stockInicial);
+
+      if (!fechaRaw) {
+        throw new Error("Fecha requerida");
+      }
+      // Espera formato YYYY-MM-DD
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(fechaRaw)) {
+        throw new Error("Fecha invalida");
+      }
+      const fecha = new Date(`${fechaRaw}T00:00:00`);
+      if (isNaN(fecha.getTime())) {
+        throw new Error("Fecha invalida");
+      }
 
       if (!codigo) {
         throw new Error("Codigo requerido");
@@ -49,8 +62,8 @@ function doPost(e) {
         throw new Error("Stock inicial invalido");
       }
 
-      // Columns: A=CODIGO, B=INGREDIENTE, C=UND PRINCIPAL (leave blank), D=STOCK INICIAL
-      return [codigo, articulo, "", stockInicial];
+      // Columns: A=FECHA, B=CODIGO, C=INGREDIENTE, D=UND PRINCIPAL (leave blank), E=STOCK
+      return [fecha, codigo, articulo, "", stockInicial];
     });
 
     target.getRange(target.getLastRow() + 1, 1, rows.length, rows[0].length).setValues(rows);
