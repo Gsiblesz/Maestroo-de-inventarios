@@ -1,4 +1,4 @@
-# Conteo de Inventario Físico (formulario independiente)
+# CONTEO DE INVENTARIO FÍSICO (formulario independiente)
 
 Formulario ligero para Vercel que envía los datos (fecha, ingrediente y cantidad) a un Google Sheet a través de un Google Apps Script.
 
