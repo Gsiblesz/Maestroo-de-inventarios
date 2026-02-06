@@ -22,7 +22,12 @@ function doOptions() {
 function doPost(e) {
   try {
     const body = JSON.parse(e.postData.contents || "{}");
+    const responsable = (body.responsable || "").toString().trim();
     const items = Array.isArray(body.items) ? body.items : [];
+
+    if (!responsable) {
+      return json({ status: "error", message: "Responsable requerido" }, 400);
+    }
 
     if (!items.length) {
       return json({ status: "error", message: "Sin items" }, 400);
@@ -62,8 +67,8 @@ function doPost(e) {
         throw new Error("Stock inicial invalido");
       }
 
-      // Columns: A=FECHA, B=CODIGO, C=INGREDIENTE, D=UND PRINCIPAL (leave blank), E=STOCK
-      return [fecha, codigo, articulo, "", stockInicial];
+      // Columns: A=FECHA, B=CODIGO, C=INGREDIENTE, D=UND PRINCIPAL (leave blank), E=RESPONSABLE, F=STOCK
+      return [fecha, codigo, articulo, "", responsable, stockInicial];
     });
 
     target.getRange(target.getLastRow() + 1, 1, rows.length, rows[0].length).setValues(rows);

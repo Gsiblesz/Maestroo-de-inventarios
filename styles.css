@@ -84,6 +84,32 @@ body {
   flex-wrap: wrap;
 }
 
+.hero__field {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.hero__label {
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: rgba(248, 250, 252, 0.92);
+  white-space: nowrap;
+}
+
+.input.input--hero {
+  width: min(320px, 52vw);
+  padding: 10px 12px;
+  border-radius: 12px;
+  border-color: rgba(226, 232, 240, 0.65);
+}
+
 .panel {
   background: var(--panel);
   border: 1px solid var(--panel-border);
@@ -188,6 +214,12 @@ body {
   outline: none;
   border-color: var(--accent);
   box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.16);
+}
+
+.input.is-invalid,
+.select.is-invalid {
+  border-color: var(--error);
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.14);
 }
 
 .item-row button {

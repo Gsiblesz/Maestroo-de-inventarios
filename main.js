@@ -7,12 +7,22 @@ const rowsContainer = document.getElementById("rows");
 const addRowBtn = document.getElementById("add-row");
 const menuLinkEl = document.getElementById("menu-link");
 const datalistEl = document.getElementById("ingredientes-list");
+const responsableEl = document.getElementById("responsable");
 
 menuLinkEl.href = MENU_LINK;
 
 const setStatus = (message, type) => {
   statusEl.textContent = message;
   statusEl.className = `status ${type || ""}`.trim();
+};
+
+const RESPONSABLE_STORAGE_KEY = "maestroInventario.responsable";
+
+const getResponsable = () => (responsableEl ? (responsableEl.value || "").trim() : "");
+
+const setInvalid = (el, invalid) => {
+  if (!el) return;
+  el.classList.toggle("is-invalid", Boolean(invalid));
 };
 
 const getLocalISODate = () => {
@@ -155,6 +165,15 @@ form.addEventListener("reset", () => {
 form.addEventListener("submit", async (event) => {
   event.preventDefault();
 
+  const responsable = getResponsable();
+  if (!responsable) {
+    setInvalid(responsableEl, true);
+    setStatus("El campo Responsable es obligatorio.", "error");
+    responsableEl && responsableEl.focus();
+    return;
+  }
+  setInvalid(responsableEl, false);
+
   const payload = Array.from(rowsContainer.children).map((row) => {
     const fechaEl = row.querySelector('input[name="fecha"]');
     const ingredienteEl = row.querySelector('input[name="ingrediente"]');
@@ -204,6 +223,7 @@ form.addEventListener("submit", async (event) => {
         "Content-Type": "text/plain;charset=utf-8",
       },
       body: JSON.stringify({
+        responsable,
         items: payload.map(({ fecha, codigo, articulo, stockInicial }) => ({ fecha, codigo, articulo, stockInicial })),
       }),
     });
@@ -224,6 +244,15 @@ form.addEventListener("submit", async (event) => {
     setStatus("No se pudo guardar. Revisa la conexion o el endpoint.", "error");
   }
 });
+
+if (responsableEl) {
+  const saved = localStorage.getItem(RESPONSABLE_STORAGE_KEY);
+  if (saved) responsableEl.value = saved;
+  responsableEl.addEventListener("input", () => {
+    setInvalid(responsableEl, false);
+    localStorage.setItem(RESPONSABLE_STORAGE_KEY, getResponsable());
+  });
+}
 
 (async () => {
   setStatus("Cargando ingredientes...", "pending");
