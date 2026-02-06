@@ -1,4 +1,4 @@
-const GAS_ENDPOINT = "https://script.google.com/macros/s/AKfycbxpcGHjuyCJkPt2ofE7ZVhBICsVnpVePWhNFk97m7xHGhHxpZhNnoY-5z5g_z3qq4Z3/exec";
+const GAS_ENDPOINT = "https://script.google.com/macros/s/AKfycbyNYZz4n0k_fqyhp_q4ziGmn0sJzO1gJ59WBxTdIRq2AG_4kB3n305sbuCoA-ahZ0cP/exec";
 const MENU_LINK = "http://menu-almacen.vercel.app/"; // URL del menú principal
 
 const form = document.getElementById("inventory-form");
