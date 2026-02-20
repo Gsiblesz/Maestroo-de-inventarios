@@ -315,6 +315,135 @@ body {
   border: 0;
 }
 
+.modal {
+  position: fixed;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  padding: 20px;
+}
+
+.modal.is-open {
+  display: flex;
+}
+
+.modal__overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.5);
+}
+
+.modal__card {
+  position: relative;
+  width: min(980px, 100%);
+  background: #ffffff;
+  border: 1px solid var(--panel-border);
+  border-radius: 20px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.modal__header,
+.modal__footer {
+  padding: 20px 22px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.modal__header {
+  border-bottom: 1px solid var(--panel-border);
+}
+
+.modal__header h3 {
+  margin: 0;
+  font-size: 30px;
+}
+
+.modal__close {
+  border: 1px solid #cbd5e1;
+  background: #f1f5f9;
+  color: #475569;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.modal__content {
+  padding: 18px 22px;
+  display: grid;
+  gap: 12px;
+}
+
+.modal__lead {
+  margin: 0;
+  text-align: center;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.modal-table {
+  border: 1px solid var(--panel-border);
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.modal-table__head,
+.modal-table__row {
+  display: grid;
+  grid-template-columns: 0.85fr 1.35fr 0.6fr 0.8fr;
+  gap: 10px;
+  padding: 12px 14px;
+  align-items: center;
+}
+
+.modal-table__head {
+  background: #f1f5f9;
+  font-weight: 700;
+}
+
+.modal-table__body {
+  max-height: 260px;
+  overflow: auto;
+}
+
+.modal-table__row {
+  border-top: 1px solid var(--panel-border);
+}
+
+.modal-table__empty {
+  padding: 16px;
+  color: var(--muted);
+  text-align: center;
+}
+
+.confirm-check {
+  border: 1px solid var(--panel-border);
+  border-radius: 14px;
+  padding: 14px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  color: var(--muted);
+}
+
+.confirm-check input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--accent-strong);
+}
+
+.modal__footer {
+  border-top: 1px solid var(--panel-border);
+  justify-content: flex-end;
+}
+
 @media (max-width: 760px) {
   .page {
     padding: 32px 0 64px;
@@ -348,5 +477,23 @@ body {
   #add-row {
     width: 100%;
     text-align: center;
+  }
+
+  .modal__header h3 {
+    font-size: 22px;
+  }
+
+  .modal-table__head,
+  .modal-table__row {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+
+  .modal__footer {
+    flex-direction: column;
+  }
+
+  .modal__footer .btn {
+    width: 100%;
   }
 }

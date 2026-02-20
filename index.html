@@ -72,6 +72,40 @@
     </section>
   </main>
 
+  <div id="confirm-modal" class="modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="confirm-modal-title">
+    <div class="modal__overlay" data-close-modal="true"></div>
+    <div class="modal__card">
+      <div class="modal__header">
+        <h3 id="confirm-modal-title">Confirmar envío</h3>
+        <button id="modal-close" type="button" class="modal__close" aria-label="Cerrar">✕</button>
+      </div>
+
+      <div class="modal__content">
+        <p class="modal__lead">Verifica los datos antes de enviar.</p>
+
+        <div class="modal-table">
+          <div class="modal-table__head">
+            <span>Código</span>
+            <span>Producto</span>
+            <span>Unidad</span>
+            <span>Cantidad entregada</span>
+          </div>
+          <div id="confirm-modal-items" class="modal-table__body"></div>
+        </div>
+
+        <label class="confirm-check">
+          <input id="modal-agree" type="checkbox">
+          <span>Yo, <strong id="modal-responsable-name">responsable</strong>, estoy de acuerdo con estos productos y cantidades.</span>
+        </label>
+      </div>
+
+      <div class="modal__footer">
+        <button id="modal-back" type="button" class="btn ghost">Volver a editar</button>
+        <button id="modal-confirm" type="button" class="btn primary" disabled>Confirmar y enviar</button>
+      </div>
+    </div>
+  </div>
+
   <script src="main.js"></script>
 </body>
 </html>
