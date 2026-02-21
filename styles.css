@@ -323,6 +323,8 @@ body {
   justify-content: center;
   z-index: 999;
   padding: 20px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .modal.is-open {
@@ -338,11 +340,13 @@ body {
 .modal__card {
   position: relative;
   width: min(980px, 100%);
+  max-height: calc(100dvh - 40px);
   background: #ffffff;
   border: 1px solid var(--panel-border);
   border-radius: 20px;
   box-shadow: var(--shadow);
-  overflow: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .modal__header,
@@ -445,6 +449,15 @@ body {
 }
 
 @media (max-width: 760px) {
+  .modal {
+    align-items: flex-start;
+    padding: 12px;
+  }
+
+  .modal__card {
+    max-height: calc(100dvh - 24px);
+  }
+
   .page {
     padding: 32px 0 64px;
   }
