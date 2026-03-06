@@ -1,5 +1,5 @@
 const GAS_ENDPOINT = "https://script.google.com/macros/s/AKfycbyNYZz4n0k_fqyhp_q4ziGmn0sJzO1gJ59WBxTdIRq2AG_4kB3n305sbuCoA-ahZ0cP/exec";
-const MENU_LINK = "http://menu-almacen.vercel.app/"; // URL del menú principal
+const MENU_LINK = "https://menu-ten-sigma.vercel.app/"; // URL del menú principal
 
 const form = document.getElementById("inventory-form");
 const statusEl = document.getElementById("status");
