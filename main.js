@@ -1,4 +1,5 @@
-const GAS_ENDPOINT = "https://script.google.com/macros/s/AKfycbyNYZz4n0k_fqyhp_q4ziGmn0sJzO1gJ59WBxTdIRq2AG_4kB3n305sbuCoA-ahZ0cP/exec";
+const GAS_ENDPOINT = "https://script.google.com/macros/s/AKfycbwfa1aM0Knqs4zwP6dtobne_HBsdL8SQQ6HHHuAAdPBMN74n3KBhwiv8M_sOiUZm9Yc/exec
+";
 const MENU_LINK = "https://menu-ten-sigma.vercel.app/"; // URL del menú principal
 
 const form = document.getElementById("inventory-form");
