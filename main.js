@@ -66,7 +66,6 @@ const getDefaultDateForNewRow = () => {
 const buildFamilySelect = () => {
   const select = document.createElement("select");
   select.name = "familia";
-  select.required = true;
   select.className = "select";
 
   const placeholder = document.createElement("option");
@@ -379,12 +378,11 @@ form.addEventListener("submit", async (event) => {
       Number.isNaN(item.stockInicial) ||
       item.stockInicial < 0 ||
       !item.matched ||
-      !item.familia ||
-      !cachedFamilies.includes(item.familia)
+      (item.familia && !cachedFamilies.includes(item.familia))
   );
 
   if (!payload.length || hasInvalid || hasInvalidDate) {
-    setStatus("Selecciona fecha valida, ingrediente valido, familia y stock (>= 0) en cada fila.", "error");
+    setStatus("Selecciona fecha valida, ingrediente valido y stock (>= 0) en cada fila.", "error");
     return;
   }
 
