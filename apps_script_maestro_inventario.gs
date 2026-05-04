@@ -1,7 +1,7 @@
 ﻿// Web App for Maestro de Inventario
 // - GET ?mode=ingredientes -> returns list from sheet COSTO MATERIA PRIMA (codigo + articulo)
 // - GET ?mode=familias -> returns list from sheet FAMILIA
-// - POST body { items: [{ fecha, codigo, articulo, familia, stockInicial }] } -> appends rows into CONTEO DE INVENTARIO FISICO
+// - POST body { items: [{ codigo, articulo, familia, stockInicial }] } -> appends rows into CONTEO DE INVENTARIO FISICO
 
 const SPREADSHEET_ID = "1MQlP9wx199xW-gIYwf4FcjdANG9TLEkSjORiNmxJH5s"; // ID del libro
 const SOURCE_SHEET = "COSTO MATERIA PRIMA";
@@ -47,23 +47,10 @@ function doPost(e) {
     const familySet = buildFamilySet();
 
     const rows = items.map((item) => {
-      const fechaRaw = (item.fecha || "").toString().trim();
       const codigo = (item.codigo || "").trim();
       const articulo = (item.articulo || sourceMap[codigo] || "").trim();
       const familia = (item.familia || "").toString().trim();
       const stockInicial = Number(item.stockInicial);
-
-      if (!fechaRaw) {
-        throw new Error("Fecha requerida");
-      }
-      // Espera formato YYYY-MM-DD
-      if (!/^\d{4}-\d{2}-\d{2}$/.test(fechaRaw)) {
-        throw new Error("Fecha invalida");
-      }
-      const fecha = new Date(`${fechaRaw}T00:00:00`);
-      if (isNaN(fecha.getTime())) {
-        throw new Error("Fecha invalida");
-      }
 
       if (!codigo) {
         throw new Error("Codigo requerido");
@@ -79,7 +66,7 @@ function doPost(e) {
       }
 
       // Columns: A=FECHA, B=CODIGO, C=INGREDIENTE, D=UND PRINCIPAL (leave blank), E=FAMILIA, F=RESPONSABLE, G=STOCK
-      return [fecha, codigo, articulo, "", familia, responsable, stockInicial];
+      return [new Date(), codigo, articulo, "", familia, responsable, stockInicial];
     });
 
     target.getRange(target.getLastRow() + 1, 1, rows.length, rows[0].length).setValues(rows);

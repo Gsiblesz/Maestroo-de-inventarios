@@ -170,7 +170,7 @@ body {
 .table__head,
 .item-row {
   display: grid;
-  grid-template-columns: 0.7fr 1.2fr 0.6fr 0.8fr 0.7fr 60px;
+  grid-template-columns: 1.2fr 0.7fr 0.8fr 0.8fr 60px;
   align-items: center;
   gap: 12px;
   padding: 14px 16px;

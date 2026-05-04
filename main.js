@@ -52,17 +52,6 @@ const setInvalid = (el, invalid) => {
   el.classList.toggle("is-invalid", Boolean(invalid));
 };
 
-const getLocalISODate = () => {
-  const now = new Date();
-  const local = new Date(now.getTime() - now.getTimezoneOffset() * 60000);
-  return local.toISOString().slice(0, 10);
-};
-
-const getDefaultDateForNewRow = () => {
-  const firstDate = rowsContainer.querySelector('input[name="fecha"]');
-  return (firstDate && firstDate.value) || getLocalISODate();
-};
-
 const buildFamilySelect = () => {
   const select = document.createElement("select");
   select.name = "familia";
@@ -88,13 +77,6 @@ const buildFamilySelect = () => {
 const createRow = () => {
   const row = document.createElement("div");
   row.className = "item-row";
-
-  const inputFecha = document.createElement("input");
-  inputFecha.name = "fecha";
-  inputFecha.type = "date";
-  inputFecha.required = true;
-  inputFecha.className = "input";
-  inputFecha.value = getDefaultDateForNewRow();
 
   const inputIngrediente = document.createElement("input");
   inputIngrediente.name = "ingrediente";
@@ -137,7 +119,7 @@ const createRow = () => {
   inputIngrediente.addEventListener("change", () => syncCodigo(row));
   inputIngrediente.addEventListener("input", () => syncCodigo(row));
 
-  row.append(inputFecha, inputIngrediente, inputCodigo, selectFamilia, inputStock, remove);
+  row.append(inputIngrediente, inputCodigo, selectFamilia, inputStock, remove);
   return row;
 };
 
@@ -197,19 +179,16 @@ const syncCodigo = (row) => {
 
 const buildPayloadFromRows = () => {
   return Array.from(rowsContainer.children).map((row) => {
-    const fechaEl = row.querySelector('input[name="fecha"]');
     const ingredienteEl = row.querySelector('input[name="ingrediente"]');
     const codigoEl = row.querySelector('input[name="codigo"]');
     const familiaEl = row.querySelector('select[name="familia"]');
     const stockEl = row.querySelector('input[name="stock"]');
 
-    const fecha = (fechaEl && fechaEl.value) || "";
     const raw = (ingredienteEl.value || "").trim();
     const match = findOptionMatch(raw);
     const familia = (familiaEl && familiaEl.value) || "";
 
     return {
-      fecha,
       codigo: codigoEl.value || (match ? match.code : raw),
       articulo: match ? match.name : "",
       familia,
@@ -280,8 +259,7 @@ const sendPayload = async ({ responsable, items }) => {
       },
       body: JSON.stringify({
         responsable,
-        items: items.map(({ fecha, codigo, articulo, familia, stockInicial }) => ({
-          fecha,
+        items: items.map(({ codigo, articulo, familia, stockInicial }) => ({
           codigo,
           articulo,
           familia,
@@ -371,7 +349,6 @@ form.addEventListener("submit", async (event) => {
 
   const payload = buildPayloadFromRows();
 
-  const hasInvalidDate = payload.some((item) => !/^\d{4}-\d{2}-\d{2}$/.test(item.fecha || ""));
   const hasInvalid = payload.some(
     (item) =>
       !item.codigo ||
@@ -381,8 +358,8 @@ form.addEventListener("submit", async (event) => {
       (item.familia && !cachedFamilies.includes(item.familia))
   );
 
-  if (!payload.length || hasInvalid || hasInvalidDate) {
-    setStatus("Selecciona fecha valida, ingrediente valido y stock (>= 0) en cada fila.", "error");
+  if (!payload.length || hasInvalid) {
+    setStatus("Selecciona ingrediente valido y stock (>= 0) en cada fila.", "error");
     return;
   }
 
