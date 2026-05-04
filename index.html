@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CONTEO DE INVENTARIO FÍSICO</title>
+  <title>CONTEO DE INVENTARIO FISICO</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -14,11 +14,11 @@
     <header class="hero">
       <div class="hero__pill">Operaciones · Inventario</div>
       <h1>CONTEO DE INVENTARIO
-        <span>FÍSICO</span>
+        <span>FISICO</span>
       </h1>
-      <p>Registra el inventario físico por fecha. Se conecta al Sheet "COSTO MATERIA PRIMA" para sugerir la lista de ingredientes.</p>
+      <p>Registra el inventario fisico por fecha. Se conecta al Sheet "COSTO MATERIA PRIMA" para sugerir la lista de ingredientes.</p>
       <div class="hero__actions">
-        <a id="menu-link" class="btn primary" href="https://menu-general.vercel.app/" target="_blank" rel="noreferrer">Ver menú principal</a>
+        <a id="menu-link" class="btn primary" href="https://menu-general.vercel.app/" target="_blank" rel="noreferrer">Ver menu principal</a>
         <div class="hero__field">
           <label class="hero__label" for="responsable">Responsable</label>
           <input
@@ -38,8 +38,8 @@
     <section class="panel">
       <div class="panel__header">
         <div>
-          <p class="eyebrow">Registro de inventario físico</p>
-          <h2>Formulario rápido</h2>
+          <p class="eyebrow">Registro de inventario fisico</p>
+          <h2>Formulario rapido</h2>
           <p class="lede">Selecciona el ingrediente desde la lista del Sheet y captura la cantidad contada. Puedes cargar varias filas antes de enviar.</p>
         </div>
         <div class="badge">COSTO MATERIA PRIMA</div>
@@ -49,8 +49,9 @@
         <div class="table">
           <div class="table__head">
             <span>Fecha</span>
-            <span>Ingrediente (código o nombre)</span>
-            <span>Código</span>
+            <span>Ingrediente (codigo o nombre)</span>
+            <span>Codigo</span>
+            <span>Familia</span>
             <span>Stock inicial</span>
             <span class="sr-only">Acciones</span>
           </div>
@@ -60,7 +61,7 @@
         <datalist id="ingredientes-list"></datalist>
 
         <div class="actions actions--between">
-          <button id="add-row" type="button" class="btn ghost">Añadir fila</button>
+          <button id="add-row" type="button" class="btn ghost">Anadir fila</button>
           <div class="right-actions">
             <button type="reset" class="btn ghost">Limpiar</button>
             <button type="submit" class="btn primary">Enviar</button>
@@ -76,7 +77,7 @@
     <div class="modal__overlay" data-close-modal="true"></div>
     <div class="modal__card">
       <div class="modal__header">
-        <h3 id="confirm-modal-title">Confirmar envío</h3>
+        <h3 id="confirm-modal-title">Confirmar envio</h3>
         <button id="modal-close" type="button" class="modal__close" aria-label="Cerrar">✕</button>
       </div>
 
@@ -85,9 +86,9 @@
 
         <div class="modal-table">
           <div class="modal-table__head">
-            <span>Código</span>
+            <span>Codigo</span>
             <span>Producto</span>
-            <span>Unidad</span>
+            <span>Familia</span>
             <span>Cantidad entregada</span>
           </div>
           <div id="confirm-modal-items" class="modal-table__body"></div>

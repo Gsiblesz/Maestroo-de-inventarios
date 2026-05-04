@@ -170,7 +170,7 @@ body {
 .table__head,
 .item-row {
   display: grid;
-  grid-template-columns: 0.7fr 1.3fr 0.6fr 0.7fr 60px;
+  grid-template-columns: 0.7fr 1.2fr 0.6fr 0.8fr 0.7fr 60px;
   align-items: center;
   gap: 12px;
   padding: 14px 16px;
@@ -401,7 +401,7 @@ body {
 .modal-table__head,
 .modal-table__row {
   display: grid;
-  grid-template-columns: 0.85fr 1.35fr 0.6fr 0.8fr;
+  grid-template-columns: 0.85fr 1.2fr 0.9fr 0.8fr;
   gap: 10px;
   padding: 12px 14px;
   align-items: center;

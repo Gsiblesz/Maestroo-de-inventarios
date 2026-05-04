@@ -1,6 +1,5 @@
-const GAS_ENDPOINT = "https://script.google.com/macros/s/AKfycbwfa1aM0Knqs4zwP6dtobne_HBsdL8SQQ6HHHuAAdPBMN74n3KBhwiv8M_sOiUZm9Yc/exec
-";
-const MENU_LINK = "https://menu-general.vercel.app/"; // URL del menú principal
+﻿const GAS_ENDPOINT = "https://script.google.com/macros/s/AKfycbwfa1aM0Knqs4zwP6dtobne_HBsdL8SQQ6HHHuAAdPBMN74n3KBhwiv8M_sOiUZm9Yc/exec";
+const MENU_LINK = "https://menu-general.vercel.app/";
 
 const form = document.getElementById("inventory-form");
 const statusEl = document.getElementById("status");
@@ -35,12 +34,7 @@ const findOptionMatch = (rawValue) => {
     cachedOptions.find((opt) => {
       const code = opt.code.toLowerCase();
       const name = opt.name.toLowerCase();
-      return (
-        code === val ||
-        name === val ||
-        `${name} · ${code}` === val ||
-        `${code} · ${name}` === val
-      );
+      return code === val || name === val || `${name} · ${code}` === val || `${code} · ${name}` === val;
     }) || null
   );
 };
@@ -69,6 +63,29 @@ const getDefaultDateForNewRow = () => {
   return (firstDate && firstDate.value) || getLocalISODate();
 };
 
+const buildFamilySelect = () => {
+  const select = document.createElement("select");
+  select.name = "familia";
+  select.required = true;
+  select.className = "select";
+
+  const placeholder = document.createElement("option");
+  placeholder.value = "";
+  placeholder.textContent = "Selecciona";
+  placeholder.disabled = true;
+  placeholder.selected = true;
+  select.appendChild(placeholder);
+
+  cachedFamilies.forEach((family) => {
+    const option = document.createElement("option");
+    option.value = family;
+    option.textContent = family;
+    select.appendChild(option);
+  });
+
+  return select;
+};
+
 const createRow = () => {
   const row = document.createElement("div");
   row.className = "item-row";
@@ -91,20 +108,22 @@ const createRow = () => {
   const inputCodigo = document.createElement("input");
   inputCodigo.name = "codigo";
   inputCodigo.type = "text";
-  inputCodigo.placeholder = "Código";
+  inputCodigo.placeholder = "Codigo";
   inputCodigo.className = "input";
   inputCodigo.readOnly = true;
   inputCodigo.tabIndex = -1;
 
-  const input = document.createElement("input");
-  input.name = "stock";
-  input.type = "number";
-  input.min = "0";
-  input.step = "0.01";
-  input.required = true;
-  input.placeholder = "0.00";
-  input.className = "input";
-  input.inputMode = "decimal";
+  const selectFamilia = buildFamilySelect();
+
+  const inputStock = document.createElement("input");
+  inputStock.name = "stock";
+  inputStock.type = "number";
+  inputStock.min = "0";
+  inputStock.step = "0.01";
+  inputStock.required = true;
+  inputStock.placeholder = "0.00";
+  inputStock.className = "input";
+  inputStock.inputMode = "decimal";
 
   const remove = document.createElement("button");
   remove.type = "button";
@@ -119,7 +138,7 @@ const createRow = () => {
   inputIngrediente.addEventListener("change", () => syncCodigo(row));
   inputIngrediente.addEventListener("input", () => syncCodigo(row));
 
-  row.append(inputFecha, inputIngrediente, inputCodigo, input, remove);
+  row.append(inputFecha, inputIngrediente, inputCodigo, selectFamilia, inputStock, remove);
   return row;
 };
 
@@ -137,7 +156,22 @@ const getOptionsFromSheet = async () => {
   }
 };
 
+const getFamiliesFromSheet = async () => {
+  try {
+    const res = await fetch(`${GAS_ENDPOINT}?mode=familias`);
+    if (!res.ok) throw new Error("No se pudo obtener la lista de familias.");
+    const data = await res.json();
+    if (!Array.isArray(data.items)) throw new Error("Respuesta inesperada.");
+    return data.items.map((item) => String(item || "").trim()).filter(Boolean);
+  } catch (err) {
+    console.error(err);
+    setStatus("No se pudo cargar la lista de familias.", "error");
+    return [];
+  }
+};
+
 let cachedOptions = [];
+let cachedFamilies = [];
 
 const renderDatalist = (options) => {
   const unique = [];
@@ -147,9 +181,7 @@ const renderDatalist = (options) => {
     seen.add(opt.code);
     unique.push(opt);
   });
-  datalistEl.innerHTML = unique
-    .map((opt) => `<option value="${opt.code}" label="${opt.name} · ${opt.code}"></option>`)
-    .join("");
+  datalistEl.innerHTML = unique.map((opt) => `<option value="${opt.code}" label="${opt.name} · ${opt.code}"></option>`).join("");
 };
 
 const syncCodigo = (row) => {
@@ -169,16 +201,19 @@ const buildPayloadFromRows = () => {
     const fechaEl = row.querySelector('input[name="fecha"]');
     const ingredienteEl = row.querySelector('input[name="ingrediente"]');
     const codigoEl = row.querySelector('input[name="codigo"]');
+    const familiaEl = row.querySelector('select[name="familia"]');
     const stockEl = row.querySelector('input[name="stock"]');
 
     const fecha = (fechaEl && fechaEl.value) || "";
     const raw = (ingredienteEl.value || "").trim();
     const match = findOptionMatch(raw);
+    const familia = (familiaEl && familiaEl.value) || "";
 
     return {
       fecha,
       codigo: codigoEl.value || (match ? match.code : raw),
       articulo: match ? match.name : "",
+      familia,
       unidad: (match && match.unit) || "-",
       stockInicial: Number((stockEl.value || "").trim()),
       matched: Boolean(match),
@@ -201,7 +236,7 @@ const renderConfirmItems = (items) => {
       <div class="modal-table__row">
         <span>${escapeHtml(item.codigo)}</span>
         <span>${escapeHtml(item.articulo)}</span>
-        <span>${escapeHtml(item.unidad)}</span>
+        <span>${escapeHtml(item.familia)}</span>
         <span>${escapeHtml(item.stockInicial)}</span>
       </div>`
     )
@@ -246,7 +281,13 @@ const sendPayload = async ({ responsable, items }) => {
       },
       body: JSON.stringify({
         responsable,
-        items: items.map(({ fecha, codigo, articulo, stockInicial }) => ({ fecha, codigo, articulo, stockInicial })),
+        items: items.map(({ fecha, codigo, articulo, familia, stockInicial }) => ({
+          fecha,
+          codigo,
+          articulo,
+          familia,
+          stockInicial,
+        })),
       }),
     });
 
@@ -332,13 +373,18 @@ form.addEventListener("submit", async (event) => {
   const payload = buildPayloadFromRows();
 
   const hasInvalidDate = payload.some((item) => !/^\d{4}-\d{2}-\d{2}$/.test(item.fecha || ""));
-
   const hasInvalid = payload.some(
-    (item) => !item.codigo || Number.isNaN(item.stockInicial) || item.stockInicial < 0 || !item.matched
+    (item) =>
+      !item.codigo ||
+      Number.isNaN(item.stockInicial) ||
+      item.stockInicial < 0 ||
+      !item.matched ||
+      !item.familia ||
+      !cachedFamilies.includes(item.familia)
   );
 
   if (!payload.length || hasInvalid || hasInvalidDate) {
-    setStatus("Selecciona una fecha valida, un codigo/nombre valido y stock (>= 0) en cada fila.", "error");
+    setStatus("Selecciona fecha valida, ingrediente valido, familia y stock (>= 0) en cada fila.", "error");
     return;
   }
 
@@ -356,9 +402,10 @@ if (responsableEl) {
 }
 
 (async () => {
-  setStatus("Cargando ingredientes...", "pending");
-  cachedOptions = await getOptionsFromSheet();
-  cachedOptions = cachedOptions.filter((opt) => {
+  setStatus("Cargando ingredientes y familias...", "pending");
+  const [ingredientes, familias] = await Promise.all([getOptionsFromSheet(), getFamiliesFromSheet()]);
+
+  cachedOptions = ingredientes.filter((opt) => {
     const code = (opt.code || "").trim();
     const name = (opt.name || "").trim();
     if (!code || !name) return false;
@@ -367,9 +414,15 @@ if (responsableEl) {
     if (upperCode === "CODIGO" || upperName === "ARTICULO") return false;
     return true;
   });
+
+  cachedFamilies = Array.from(new Set(familias.map((f) => f.trim()).filter(Boolean)));
+
   renderDatalist(cachedOptions);
   ensureRows(1);
-  if (cachedOptions.length) {
-    setStatus("Lista cargada. Puedes registrar.", "success");
+
+  if (cachedOptions.length && cachedFamilies.length) {
+    setStatus("Listas cargadas. Puedes registrar.", "success");
+  } else if (!cachedFamilies.length) {
+    setStatus("No se encontraron familias en la hoja FAMILIA.", "error");
   }
 })();
