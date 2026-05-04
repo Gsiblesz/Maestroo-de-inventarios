@@ -58,7 +58,10 @@ function doPost(e) {
       if (!articulo) {
         throw new Error("Articulo no encontrado");
       }
-      if (familia && !familySet[familia.toUpperCase()]) {
+      if (!familia) {
+        throw new Error("Familia requerida");
+      }
+      if (!familySet[familia.toUpperCase()]) {
         throw new Error(`Familia invalida: ${familia}`);
       }
       if (Number.isNaN(stockInicial) || stockInicial < 0) {
