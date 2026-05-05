@@ -17,19 +17,6 @@
       <p>Registra el inventario fisico. La fecha de creacion se guarda automaticamente al enviar.</p>
       <div class="hero__actions">
         <a id="menu-link" class="btn primary" href="https://menu-general.vercel.app/" target="_blank" rel="noreferrer">Volver al menu</a>
-        <div class="hero__field">
-          <label class="hero__label" for="responsable">Responsable</label>
-          <input
-            id="responsable"
-            name="responsable"
-            form="inventory-form"
-            type="text"
-            class="input input--hero"
-            placeholder="Nombre y apellido"
-            autocomplete="name"
-            required
-          >
-        </div>
       </div>
     </header>
 
@@ -44,6 +31,11 @@
       </div>
 
       <form id="inventory-form" class="form" novalidate>
+        <div class="form__lead-field">
+          <label class="form__label" for="responsable">Responsable</label>
+          <input id="responsable" name="responsable" class="input" type="text" placeholder="Nombre y apellido" autocomplete="name" required>
+        </div>
+
         <div class="table">
           <div class="table__head">
             <span>Ingrediente (codigo o nombre)</span>
